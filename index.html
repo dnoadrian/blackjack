@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="description" content="Grand Royale Blackjack - Live Multiplayer Casino mit Solo, Duo und Trio Modus.">
+    <title>Grand Royale Blackjack</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Reusable SVG sprite library for textures (no emojis on table) -->
+    <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+        <defs>
+            <symbol id="ico-spade" viewBox="0 0 100 100">
+                <path d="M50,10 C40,32 8,40 8,62 C8,78 28,86 48,72 L48,82 L36,90 L64,90 L52,82 L52,72 C72,86 92,78 92,62 C92,40 60,32 50,10 Z"/>
+            </symbol>
+            <symbol id="ico-heart" viewBox="0 0 100 100">
+                <path d="M50,90 C50,90 8,68 8,40 C8,22 22,12 36,12 C44,12 50,18 50,26 C50,18 56,12 64,12 C78,12 92,22 92,40 C92,68 50,90 50,90 Z"/>
+            </symbol>
+            <symbol id="ico-diamond" viewBox="0 0 100 100">
+                <path d="M50,8 L88,50 L50,92 L12,50 Z"/>
+            </symbol>
+            <symbol id="ico-club" viewBox="0 0 100 100">
+                <circle cx="50" cy="32" r="18"/>
+                <circle cx="30" cy="56" r="18"/>
+                <circle cx="70" cy="56" r="18"/>
+                <path d="M50,52 L50,82 L36,90 L64,90 L52,82 Z"/>
+            </symbol>
+            <symbol id="ico-crown" viewBox="0 0 100 100">
+                <path d="M10,80 L20,30 L40,55 L50,20 L60,55 L80,30 L90,80 Z" stroke-linejoin="round"/>
+                <rect x="10" y="80" width="80" height="10"/>
+            </symbol>
+            <symbol id="ico-shield" viewBox="0 0 100 100">
+                <path d="M50,8 L88,22 L88,50 C88,72 70,88 50,94 C30,88 12,72 12,50 L12,22 Z"/>
+            </symbol>
+            <symbol id="ico-star" viewBox="0 0 100 100">
+                <path d="M50,5 L62,38 L97,38 L68,58 L80,92 L50,72 L20,92 L32,58 L3,38 L38,38 Z"/>
+            </symbol>
+            <symbol id="ico-anchor" viewBox="0 0 100 100">
+                <circle cx="50" cy="20" r="10" fill="none" stroke-width="8"/>
+                <line x1="50" y1="30" x2="50" y2="85" stroke-width="8"/>
+                <line x1="32" y1="42" x2="68" y2="42" stroke-width="8"/>
+                <path d="M20,60 C20,80 35,90 50,90 C65,90 80,80 80,60" fill="none" stroke-width="8"/>
+            </symbol>
+            <symbol id="ico-bolt" viewBox="0 0 100 100">
+                <path d="M58,5 L18,55 L46,55 L36,95 L82,40 L52,40 Z"/>
+            </symbol>
+            <symbol id="ico-flame" viewBox="0 0 100 100">
+                <path d="M50,5 C30,30 20,45 20,65 C20,82 33,93 50,93 C67,93 80,82 80,65 C80,55 75,48 68,42 C72,55 64,60 60,55 C58,42 50,30 50,5 Z"/>
+            </symbol>
+            <symbol id="ico-coin" viewBox="0 0 100 100">
+                <circle cx="50" cy="50" r="42" fill="none" stroke-width="6"/>
+                <text x="50" y="62" font-family="Montserrat, sans-serif" font-weight="900" font-size="44" text-anchor="middle">$</text>
+            </symbol>
+            <symbol id="ico-dealer" viewBox="0 0 100 100">
+                <path d="M50,10 L75,28 L75,40 L50,50 L25,40 L25,28 Z"/>
+                <path d="M50,52 L78,60 L82,90 L18,90 L22,60 Z"/>
+            </symbol>
+            <symbol id="ico-sound-on" viewBox="0 0 24 24">
+                <path d="M3,9 L3,15 L7,15 L12,20 L12,4 L7,9 Z" fill="currentColor"/>
+                <path d="M14,8 C16,10 16,14 14,16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/>
+                <path d="M17,5 C21,9 21,15 17,19" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/>
+            </symbol>
+            <symbol id="ico-sound-off" viewBox="0 0 24 24">
+                <path d="M3,9 L3,15 L7,15 L12,20 L12,4 L7,9 Z" fill="currentColor"/>
+                <line x1="14" y1="8" x2="22" y2="16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                <line x1="22" y1="8" x2="14" y2="16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </symbol>
+            <symbol id="ico-info" viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"/>
+                <line x1="12" y1="11" x2="12" y2="17" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+                <circle cx="12" cy="7.5" r="1.4" fill="currentColor"/>
+            </symbol>
+            <symbol id="ico-edit" viewBox="0 0 24 24">
+                <path d="M3,17 L3,21 L7,21 L18,10 L14,6 Z M15,5 L19,9 L21,7 L17,3 Z" fill="currentColor"/>
+            </symbol>
+        </defs>
+    </svg>
+
+    <div id="app" class="app-container">
+
+        <header class="hud-header">
+            <div class="hud-brand">
+                <span class="brand-emblem">
+                    <svg viewBox="0 0 100 100"><use href="#ico-spade"/></svg>
+                </span>
+                <h1>GRAND ROYALE</h1>
+            </div>
+
+            <div class="hud-stats">
+
+                <!-- ONLINE / OFFLINE MODE TOGGLE -->
+                <div class="mode-toggle" id="online-mode-toggle" title="Online/Offline-Modus umschalten">
+                    <span class="mode-toggle-label" id="mode-toggle-label">ONLINE</span>
+                    <div class="mode-toggle-switch">
+                        <div class="mode-toggle-thumb"></div>
+                    </div>
+                </div>
+
+                <div class="hud-profile-card" id="btn-show-profile" title="Profil bearbeiten">
+                    <span class="hud-avatar-wrap">
+                        <span class="player-avatar" id="hud-avatar"></span>
+                    </span>
+                    <div class="profile-details">
+                        <span class="player-name" id="hud-player-name">Gast</span>
+                        <div class="level-badge-container">
+                            <span class="rank-name" id="hud-rank-name">Bronze V</span>
+                            <span class="level-badge" id="hud-level-number">Lvl 1</span>
+                        </div>
+                    </div>
+                    <span class="edit-pencil"><svg viewBox="0 0 24 24"><use href="#ico-edit"/></svg></span>
+                </div>
+
+                <div class="xp-bar-container">
+                    <div class="xp-bar-fill" id="hud-xp-fill" style="width: 0%;"></div>
+                    <span class="xp-text" id="hud-xp-text">0 / 100 XP</span>
+                </div>
+
+                <div class="coins-display">
+                    <span class="coin-icon"><svg viewBox="0 0 100 100"><use href="#ico-coin"/></svg></span>
+                    <span id="hud-coins-amount" class="coins-amount">1.000</span>
+                </div>
+
+                <div class="hud-controls">
+                    <button id="btn-sound-toggle" class="control-btn" title="Sound Ein/Aus">
+                        <svg viewBox="0 0 24 24"><use href="#ico-sound-on" id="sound-icon-use"/></svg>
+                    </button>
+                    <button id="btn-show-rules" class="control-btn" title="Spielregeln">
+                        <svg viewBox="0 0 24 24"><use href="#ico-info"/></svg>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- SCREEN: LOBBY -->
+        <main id="screen-lobby" class="game-screen active">
+            <div class="lobby-grid">
+
+                <div class="lobby-sidebar">
+                    <section class="lobby-card daily-wheel-card">
+                        <h3>Tägliches Bonusrad</h3>
+                        <p class="card-desc">Drehe das Rad und gewinne täglich Gratis-Chips!</p>
+                        <div class="wheel-outer">
+                            <div class="wheel-pointer">▼</div>
+                            <div class="wheel-spinner" id="wheel-spinner"></div>
+                        </div>
+                        <button id="btn-spin-wheel" class="btn btn-gold btn-full">Gratis Drehen</button>
+                        <div id="wheel-timer" class="wheel-timer hidden">Nächster Spin in 23:59:59</div>
+                    </section>
+
+                    <section class="lobby-card stats-card">
+                        <h3>Deine Karriere</h3>
+                        <div class="career-stats-grid">
+                            <div class="stat-item">
+                                <span class="stat-val" id="stat-hands-played">0</span>
+                                <span class="stat-label">Spiele</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-val" id="stat-win-rate">0%</span>
+                                <span class="stat-label">Winrate</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-val" id="stat-blackjack-count">0</span>
+                                <span class="stat-label">Blackjacks</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-val" id="stat-highest-chips">1.000</span>
+                                <span class="stat-label">Rekord</span>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+
+                <!-- CENTRAL: Single PLAY table with mode selector -->
+                <div class="lobby-main">
+                    <h2>Spielmodus wählen</h2>
+
+                    <div class="play-panel">
+                        <div class="play-panel-bg"></div>
+
+                        <div class="play-panel-header">
+                            <div class="play-table-badge">Live Multiplayer</div>
+                            <h3 class="play-table-title">PLAY</h3>
+                            <p class="play-table-desc">Echtgeld-Atmosphäre - Spiele live gegen den Dealer mit bis zu drei Spielern an einem Tisch.</p>
+                        </div>
+
+                        <div class="mode-selector" role="radiogroup" aria-label="Spielmodus">
+                            <button class="mode-option active" data-mode="solo" role="radio" aria-checked="true">
+                                <div class="mode-figures mode-figures-solo">
+                                    <span class="figure"></span>
+                                </div>
+                                <span class="mode-title">SOLO</span>
+                                <span class="mode-sub">1 Spieler · gegen Dealer</span>
+                            </button>
+                            <button class="mode-option" data-mode="duo" role="radio" aria-checked="false">
+                                <div class="mode-figures mode-figures-duo">
+                                    <span class="figure"></span>
+                                    <span class="figure"></span>
+                                </div>
+                                <span class="mode-title">DUO</span>
+                                <span class="mode-sub">2 Spieler · Co-op</span>
+                            </button>
+                            <button class="mode-option" data-mode="trio" role="radio" aria-checked="false">
+                                <div class="mode-figures mode-figures-trio">
+                                    <span class="figure"></span>
+                                    <span class="figure"></span>
+                                    <span class="figure"></span>
+                                </div>
+                                <span class="mode-title">TRIO</span>
+                                <span class="mode-sub">3 Spieler · Party</span>
+                            </button>
+                        </div>
+
+                        <div class="play-stats">
+                            <div class="play-stat">
+                                <span class="play-stat-label">Min. Einsatz</span>
+                                <span class="play-stat-val"><svg class="inline-coin" viewBox="0 0 100 100"><use href="#ico-coin"/></svg> 10</span>
+                            </div>
+                            <div class="play-stat">
+                                <span class="play-stat-label">Online jetzt</span>
+                                <span class="play-stat-val" id="online-now">--</span>
+                            </div>
+                            <div class="play-stat">
+                                <span class="play-stat-label">Modus</span>
+                                <span class="play-stat-val" id="online-mode-readout">ONLINE</span>
+                            </div>
+                        </div>
+
+                        <button id="btn-play" class="btn btn-gold btn-play-big">JETZT SPIELEN</button>
+                    </div>
+                </div>
+
+                <div class="lobby-leaderboard-sidebar">
+                    <section class="lobby-card leaderboard-card">
+                        <h3>Globale Elite</h3>
+                        <div class="leaderboard-list" id="leaderboard-list"></div>
+                    </section>
+
+                    <!-- ADMIN ACCESS (Only visible in Lobby) -->
+                    <button id="btn-admin-access" class="btn btn-secondary btn-small" style="margin-top: 15px; width: 100%; opacity: 0.5;">
+                        <svg viewBox="0 0 24 24" style="width: 14px; height: 14px; margin-right: 6px; fill: currentColor;">
+                            <path d="M12,17 C10.9,17 10,16.1 10,15 C10,13.9 10.9,13 12,13 C13.1,13 14,13.9 14,15 C14,16.1 13.1,17 12,17 Z M18,8 L16,8 L16,6 C16,3.8 14.2,2 12,2 C9.8,2 8,3.8 8,6 L8,8 L6,8 C4.9,8 4,8.9 4,10 L4,20 C4,21.1 4.9,22 6,22 L18,22 C19.1,22 20,21.1 20,20 L20,10 C20,8.9 19.1,8 18,8 Z M10,6 C10,4.9 10.9,4 12,4 C13.1,4 14,4.9 14,6 L14,8 L10,8 L10,6 Z"/>
+                        </svg>
+                        Admin Bereich
+                    </button>
+                </div>
+
+            </div>
+        </main>
+
+        <!-- SCREEN: MATCHMAKING -->
+        <div id="screen-matchmaking" class="game-screen">
+            <div class="matchmaking-container">
+                <div class="matchmaking-header">
+                    <span class="pulse-indicator"></span>
+                    <h2 id="matchmaking-title">Suche nach Spielern...</h2>
+                    <p id="matchmaking-subtitle">Modus: Duo</p>
+                </div>
+
+                <div class="radar-container">
+                    <div class="radar-wave wave1"></div>
+                    <div class="radar-wave wave2"></div>
+                    <div class="radar-wave wave3"></div>
+                    <div class="radar-center">
+                        <svg viewBox="0 0 100 100"><use href="#ico-spade"/></svg>
+                    </div>
+                </div>
+
+                <div class="matchmaking-status">
+                    <div class="status-msg" id="matchmaking-status-text">Verbindung zum Casino-Netzwerk wird hergestellt...</div>
+                    <div class="player-slots-horizontal" id="mm-player-slots"></div>
+                </div>
+
+                <div class="matchmaking-actions">
+                    <button id="btn-cancel-matchmaking" class="btn btn-secondary">Abbrechen</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- SCREEN: GAME TABLE -->
+        <main id="screen-game-table" class="game-screen">
+            <div class="table-header-panel">
+                <button id="btn-leave-table" class="btn btn-secondary btn-small">← Verlassen</button>
+                <div class="table-info-label" id="table-info-label">PLAY · Solo · Min Bet: 10</div>
+                <div class="shoe-count-display">Karten im Schuh: <span id="deck-cards-remaining">312</span></div>
+            </div>
+
+            <div class="casino-felt">
+
+                <div class="felt-checker-border"></div>
+
+                <div class="felt-print-ring"></div>
+                <div class="felt-rules-label">BLACKJACK PAYS 3 TO 2<br>DEALER MUST STAND ON 17</div>
+
+                <div class="card-shoe-area">
+                    <div class="shoe-deck">
+                        <div class="shoe-card-back"></div>
+                    </div>
+                </div>
+
+                <!-- Dealer -->
+                <div class="seat-dealer">
+                    <div class="seat-profile">
+                        <div class="seat-avatar dealer-avatar">
+                            <svg viewBox="0 0 100 100"><use href="#ico-dealer"/></svg>
+                        </div>
+                        <span class="seat-name">DEALER</span>
+                    </div>
+                    <div class="hand-container" id="dealer-hand"></div>
+                    <div class="hand-value hidden" id="dealer-hand-score">0</div>
+                </div>
+
+                <!-- Player seats are rendered dynamically into this container -->
+                <div class="seats-container" id="seats-container" data-mode="solo"></div>
+
+            </div>
+
+            <!-- Controls Dock -->
+            <div class="table-controls-dock">
+
+                <div class="control-phase" id="controls-betting">
+                    <div class="betting-instruction" id="betting-instruction">Wähle deine Chips und platziere deinen Einsatz</div>
+
+                    <div class="chip-selector">
+                        <button class="casino-chip chip-10" data-val="10">10</button>
+                        <button class="casino-chip chip-50" data-val="50">50</button>
+                        <button class="casino-chip chip-100" data-val="100">100</button>
+                        <button class="casino-chip chip-500" data-val="500">500</button>
+                        <button class="casino-chip chip-1000" data-val="1000">1K</button>
+                    </div>
+
+                    <div class="betting-actions">
+                        <button id="btn-clear-bet" class="btn btn-secondary">Einsatz Löschen</button>
+                        <button id="btn-deal-cards" class="btn btn-gold btn-glow disabled">Bereit (Karten geben)</button>
+                    </div>
+                </div>
+
+                <div class="control-phase hidden" id="controls-playing">
+                    <div class="action-instruction" id="action-instruction">Du bist an der Reihe!</div>
+                    <div class="action-buttons">
+                        <button id="btn-action-hit" class="btn btn-primary btn-game">Karte (Hit)</button>
+                        <button id="btn-action-stand" class="btn btn-danger btn-game">Halten (Stand)</button>
+                        <button id="btn-action-double" class="btn btn-gold btn-game">Verdoppeln (Double)</button>
+                    </div>
+                </div>
+
+                <div class="control-phase hidden" id="controls-waiting">
+                    <div class="action-instruction" id="waiting-text">Warte auf andere Spieler...</div>
+                </div>
+            </div>
+
+            <div id="game-outcome-banner" class="outcome-banner hidden">
+                <h2 id="outcome-title">GEWONNEN!</h2>
+                <div id="outcome-chips-won" class="chips-reward">+ 200</div>
+                <div id="outcome-xp-won" class="xp-reward">+ 15 XP</div>
+                <div id="outcome-subtitle" class="outcome-subtitle">Zurück zur Lobby in <span id="lobby-countdown">5</span>s</div>
+            </div>
+
+            <!-- Confetti container for win animation -->
+            <div id="confetti-stage" class="confetti-stage"></div>
+
+        </main>
+
+        <!-- PROFILE MODAL -->
+        <div id="modal-profile" class="modal-overlay">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Spielerprofil bearbeiten</h2>
+                    <span class="close-modal" id="close-profile-modal">&times;</span>
+                </div>
+                <div class="modal-body">
+                    <div class="profile-editor-form">
+                        <div class="form-group">
+                            <label for="input-nickname">Dein Anzeigename:</label>
+                            <input type="text" id="input-nickname" placeholder="Spitzname eingeben" maxlength="16">
+                            <p class="form-hint">Der Name kann jederzeit geändert werden - dein Karriere-Account bleibt erhalten.</p>
+                        </div>
+                        <div class="form-group">
+                            <label>Wähle dein Wappen:</label>
+                            <div class="avatar-selection-grid" id="avatar-grid"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button id="btn-save-profile" class="btn btn-gold">Speichern</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- RULES MODAL -->
+        <div id="modal-rules" class="modal-overlay">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Blackjack Spielregeln</h2>
+                    <span class="close-modal" id="close-rules-modal">&times;</span>
+                </div>
+                <div class="modal-body">
+                    <div class="rules-text">
+                        <h3>Ziel des Spiels</h3>
+                        <p>Komm mit deinen Karten näher an 21 Punkte heran als der Dealer, ohne 21 zu überschreiten (Bust).</p>
+
+                        <h3>Kartenwerte</h3>
+                        <ul>
+                            <li><strong>Asse:</strong> 1 oder 11 Punkte (je nachdem, was besser für dich ist).</li>
+                            <li><strong>Bilder (J, Q, K):</strong> Jeweils 10 Punkte.</li>
+                            <li><strong>Zahlenkarten (2-10):</strong> Entsprechen ihrem aufgedruckten Wert.</li>
+                        </ul>
+
+                        <h3>Auszahlungen</h3>
+                        <ul>
+                            <li><strong>Normaler Sieg:</strong> 1:1 deines Einsatzes.</li>
+                            <li><strong>Blackjack (Ass + 10er als erste zwei Karten):</strong> Zahlt 3:2.</li>
+                            <li><strong>Unentschieden (Push):</strong> Du erhältst deinen Einsatz zurück.</li>
+                        </ul>
+
+                        <h3>Optionen im Spiel</h3>
+                        <ul>
+                            <li><strong>Karte (Hit):</strong> Ziehe eine weitere Karte.</li>
+                            <li><strong>Halten (Stand):</strong> Beende deine Runde mit der aktuellen Summe.</li>
+                            <li><strong>Verdoppeln (Double Down):</strong> Verdopple deinen Einsatz für genau eine weitere Karte.</li>
+                        </ul>
+
+                        <h3>Modi</h3>
+                        <ul>
+                            <li><strong>Solo:</strong> Du gegen den Dealer.</li>
+                            <li><strong>Duo:</strong> Du und ein weiterer Spieler gegen den Dealer.</li>
+                            <li><strong>Trio:</strong> Du und zwei weitere Spieler gegen den Dealer.</li>
+                        </ul>
+
+                        <h3>Online / Offline</h3>
+                        <p><strong>ONLINE:</strong> Matchmaking sucht so lange echte Spieler, bis genug Personen am Tisch sind.<br><strong>OFFLINE:</strong> Plätze werden sofort mit Bots aufgefüllt.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- LEAVE CONFIRMATION (in-app, not browser confirm) -->
+        <div id="modal-confirm" class="modal-overlay">
+            <div class="modal-content modal-small">
+                <div class="modal-header">
+                    <h2 id="confirm-title">Tisch verlassen?</h2>
+                </div>
+                <div class="modal-body">
+                    <p id="confirm-message">Wenn du den Tisch jetzt verlässt, verlierst du deinen Einsatz. Möchtest du fortfahren?</p>
+                </div>
+                <div class="modal-footer">
+                    <button id="btn-confirm-cancel" class="btn btn-secondary">Bleiben</button>
+                    <button id="btn-confirm-ok" class="btn btn-danger">Verlassen</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- TOAST NOTIFICATIONS -->
+        <div id="toast-container" class="toast-container" aria-live="polite"></div>
+
+        <!-- ADMIN LOGIN MODAL -->
+        <div id="modal-admin-login" class="modal-overlay">
+            <div class="modal-content modal-small">
+                <div class="modal-header">
+                    <h2>Admin Login</h2>
+                    <span class="close-modal" id="close-admin-login">&times;</span>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="input-admin-pwd">Passwort eingeben:</label>
+                        <input type="password" id="input-admin-pwd" placeholder="Passwort...">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button id="btn-admin-submit-login" class="btn btn-gold">Einloggen</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ADMIN PANEL MODAL -->
+        <div id="modal-admin-panel" class="modal-overlay">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Admin Control Panel</h2>
+                    <span class="close-modal" id="close-admin-panel">&times;</span>
+                </div>
+                <div class="modal-body">
+                    <div class="admin-panel-grid">
+                        <div class="admin-action-card">
+                            <h3>Unendlich Reichtum</h3>
+                            <p>Fügt deinem Account sofort 100.000 Münzen hinzu.</p>
+                            <button id="btn-admin-add-coins" class="btn btn-gold btn-full">+ 100k Münzen</button>
+                        </div>
+                        <div class="admin-action-card">
+                            <h3>Leaderboard Reset</h3>
+                            <p>Löscht alle gespeicherten Spielerdaten aus dem Leaderboard.</p>
+                            <button id="btn-admin-reset-leaderboard" class="btn btn-danger btn-full">Leaderboard Leeren</button>
+                        </div>
+                        <div class="admin-action-card">
+                            <h3>Cloud Sessions Reset</h3>
+                            <p>Schließt alle hängengebliebenen Tische im Netzwerk.</p>
+                            <button id="btn-admin-clear-sessions" class="btn btn-danger btn-full">Sessions Löschen</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Firebase SDK (compat for simplest GitHub Pages deployment) -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
